@@ -1,6 +1,17 @@
 .App {
   text-align: center;
 }
+.MyCanvas {
+  background-color: #282c34;
+  position: relative;
+  left: 30px;
+}
+#canvas {
+  background-color: #09d3ac;
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
 
 .App-logo {
   height: 40vmin;
