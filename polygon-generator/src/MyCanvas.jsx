@@ -90,7 +90,7 @@ class MyCanvas extends Component {
                   cx={point[0]}
                   cy={point[1]}
                   r="2"
-                  fill="yellow"
+                  fill="rgb(100,100,100)"
                 />
               );
             })}
@@ -101,7 +101,7 @@ class MyCanvas extends Component {
                   y1={line[0][1]}
                   x2={line[1][0]}
                   y2={line[1][1]}
-                  style={{ stroke: "rgb(255,0,0)", strokeWidth: "2" }}
+                  style={{ stroke: "rgb(63, 123, 210)", strokeWidth: "2" }}
                 />
               );
             })}
