@@ -6,7 +6,10 @@ import MyCanvas from './MyCanvas';
 function App() {
   return (
     <div className="App">
-      <MyCanvas></MyCanvas>
+      <div id="canvasCont">
+      <MyCanvas ></MyCanvas>
+      </div>
+      
     </div>
   );
 }
