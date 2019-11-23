@@ -7,7 +7,6 @@ class MyCanvas extends Component {
   };
 
   onCanvasClick = event => {
-    // event.screenX =
     console.log("item clicked at coord " + event.clientX + " " + event.clientY);
     const style = getComputedStyle(document.querySelector("#canvasCont"));
     const point = [event.clientX, event.clientY];
@@ -27,16 +26,13 @@ class MyCanvas extends Component {
     ];
     const newPoint = [point[0] - changes[0], point[1] - changes[1]];
     console.log("item clicked at coord " + newPoint[0] + " " + newPoint[1]);
-    //     const points = [...this.state.points];
-    // const index = counters.indexOf(counter);
-    // counters[index] = { ...counter };
-    // counters[index].value++;
-    // this.setState({ counters })
+    console.log(" state ", this.state.points)
+    const points = [...this.state.points, newPoint];
+    this.setState({ points })
   };
 
-  state = {};
   render() {
-    return <div id="canvas" onClick={this.onCanvasClick}></div>;
+      return (<div id="canvas" onClick={this.onCanvasClick}></div>);
   }
 }
 
