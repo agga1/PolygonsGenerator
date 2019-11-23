@@ -3,7 +3,12 @@ import React, { Component } from "react";
 class MyCanvas extends Component {
   state = {
     points: [],
-    lines: [],
+    lines: [
+      [
+        [150, 100],
+        [20, 30]
+      ]
+    ],
     mode: "points"
   };
 
@@ -41,6 +46,17 @@ class MyCanvas extends Component {
                   cy={point[1]}
                   r="2"
                   fill="yellow"
+                />
+              );
+            })}
+            {this.state.lines.map((line, ind) => {
+              return (
+                <line
+                  x1={line[0][0]}
+                  y1={line[0][1]}
+                  x2={line[1][0]}
+                  y2={line[1][1]}
+                  style={{stroke:"rgb(255,0,0)", strokeWidth:"2"}}
                 />
               );
             })}
