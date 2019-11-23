@@ -2,15 +2,15 @@
   text-align: center;
 }
 #canvasCont {
+  display: flex;
   position: relative;
   left: 30px;
   top: 50px;
 }
 #canvas {
-  background-color: #09d3ac;
-  position: relative;
-  width: 100px;
-  height: 100px;
+  background-color: #cc09d3;
+  width: 400px;
+  height: 400px;
 }
 
 .App-logo {
