@@ -83,6 +83,35 @@ class MyCanvas extends Component {
   onChangeMode = mode => {
     console.log("new mode " + mode);
     this.setState({ mode });
+    this.setState({ prevPoints: [] });
+  };
+  exportToJson = typeOfData => {
+    function download(filename, text) {
+      var element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      );
+      element.setAttribute("download", filename);
+
+      element.style.display = "none";
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+    switch (typeOfData) {
+      case "points":
+        download("points.json", JSON.stringify(this.state.points));
+        break;
+      case "lines":
+        download("lines.json", JSON.stringify(this.state.lines));
+        break;
+      case "polygons":
+        download("polygons.json", JSON.stringify(this.state.polygons));
+        break;
+    }
   };
   render() {
     return (
@@ -124,17 +153,40 @@ class MyCanvas extends Component {
             })}
           </svg>
         </div>
-        <button id="enter-points" onClick={() => this.onChangeMode("points")}>
+        <button
+          id="enter-points"
+          className="btn btn-primary"
+          onClick={() => this.onChangeMode("points")}
+        >
           Enter points
         </button>
-        <button id="enter-lines" onClick={() => this.onChangeMode("lines")}>
+        <button
+          id="enter-lines"
+          className="btn btn-primary"
+          onClick={() => this.onChangeMode("lines")}
+        >
           Enter lines
         </button>
         <button
           id="enter-polygons"
+          className="btn btn-primary"
           onClick={() => this.onChangeMode("polygons")}
         >
           Enter polygons
+        </button>
+        <button
+          id="export-to-json"
+          className="btn btn-primary"
+          onClick={() => this.exportToJson("points")}
+        >
+          export points to json
+        </button>
+        <button
+          id="export-to-json"
+          className="btn btn-primary"
+          onClick={() => this.exportToJson("lines")}
+        >
+          export lines to json
         </button>
       </div>
     );
