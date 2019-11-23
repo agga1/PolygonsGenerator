@@ -8,29 +8,17 @@ class MyCanvas extends Component {
   };
 
   onCanvasClick = event => {
-    const style = getComputedStyle(document.querySelector("#canvasCont"));
     const point = [event.clientX, event.clientY];
-    const changes = [
-      parseInt(
-        style.left
-          .split("")
-          .slice(0, -2)
-          .join("")
-      ),
-      parseInt(
-        style.top
-          .split("")
-          .slice(0, -2)
-          .join("")
-      )
-    ];
-    const newPoint = [point[0] - changes[0], point[1] - changes[1]];
+    var element = document.getElementById("canvas");
+    var position = element.getBoundingClientRect();
+    var x = position.left;
+    var y = position.top;
+    const newPoint = [point[0] - x, point[1] - y];
     console.log(
       this.state.mode + " clicked at coord " + newPoint[0] + " " + newPoint[1]
     );
     switch (this.state.mode) {
       case "points":
-        const newPoint = [event.clientX, event.clientY];
         const points = [...this.state.points, newPoint];
         this.setState({ points });
         break;
@@ -42,15 +30,29 @@ class MyCanvas extends Component {
   };
   render() {
     return (
-      <>
-        <div id="canvas" onClick={this.onCanvasClick}></div>
+      <div>
+        <div id="canvas" onClick={this.onCanvasClick}>
+          <svg width="100%" height="100%">
+            {this.state.points.map((point, ind) => {
+              return (
+                <circle
+                  key={ind}
+                  cx={point[0]}
+                  cy={point[1]}
+                  r="2"
+                  fill="yellow"
+                />
+              );
+            })}
+          </svg>
+        </div>
         <button id="enter-points" onClick={() => this.onChangeMode("points")}>
           Enter points
         </button>
         <button id="enter-lines" onClick={() => this.onChangeMode("lines")}>
           Enter lines
         </button>
-      </>
+      </div>
     );
   }
 }
