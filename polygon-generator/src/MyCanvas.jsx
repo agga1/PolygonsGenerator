@@ -4,6 +4,7 @@ class MyCanvas extends Component {
   state = {
     points: [],
     lines: [],
+    prevPoints: [],
     mode: "points"
   };
 
@@ -30,11 +31,24 @@ class MyCanvas extends Component {
     );
     switch (this.state.mode) {
       case "points":
-        const newPoint = [event.clientX, event.clientY];
         const points = [...this.state.points, newPoint];
         this.setState({ points });
         break;
+      case "lines":
+        if (this.state.prevPoints.length < 1) {
+          const prevPoints = [newPoint];
+          this.setState({ prevPoints });
+        } else {
+          const newLine = [this.state.prevPoints[0], newPoint];
+          const lines = [...this.state.lines, newLine];
+          this.setState({ lines });
+          const prevPoints = [];
+          this.setState({ prevPoints });
+        }
+        break;
     }
+    console.log(this.state.points);
+    console.log(this.state.lines);
   };
   onChangeMode = mode => {
     console.log("new mode " + mode);
