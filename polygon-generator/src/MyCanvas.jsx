@@ -10,6 +10,7 @@ class MyCanvas extends Component {
         [20, 30]
       ]
     ],
+    allLines: [],
     polygons: [],
     mode: "points"
   };
@@ -41,9 +42,43 @@ class MyCanvas extends Component {
           this.setState({ prevPoints });
         }
         break;
+      case "polygons":
+        if (this.state.prevPoints.length < 1) {
+          const prevPoints = [newPoint];
+          this.setState({ prevPoints });
+        } else {
+          let polygonEnded = false;
+          const newLine = [this.state.prevPoints[0], newPoint];
+          let lines = [this.state.prevPoints[0], newPoint];
+          const allLines = [...this.state.lines, newLine];
+          let prevPoints = [];
+          for (let i = 0; i < this.state.prevPoints; i++) {
+            if (
+              newPoint[0] == this.state.prevPoints[i][0] &&
+              newPoint[1] == this.state.prevPoints[i][1]
+            ) {
+              const polygon = [...this.state.lines, newLine];
+              const polygons = [...this.state.polygons, polygon];
+              this.setState({ polygons });
+              lines = [];
+
+              polygonEnded = true;
+            }
+          }
+          if (!polygonEnded) {
+            prevPoints = [...this.state.prevPoints, newPoint];
+          }
+
+          this.setState({ lines });
+          this.setState({ prevPoints });
+          this.setState({ allLines });
+        }
+
+        break;
     }
     console.log(this.state.points);
     console.log(this.state.lines);
+    console.log(this.state.polygon);
   };
   onChangeMode = mode => {
     console.log("new mode " + mode);
@@ -105,6 +140,17 @@ class MyCanvas extends Component {
                 />
               );
             })}
+            {this.state.allLines.map((line, ind) => {
+              return (
+                <line
+                  x1={line[0][0]}
+                  y1={line[0][1]}
+                  x2={line[1][0]}
+                  y2={line[1][1]}
+                  style={{ stroke: "rgb(255,0,0)", strokeWidth: "2" }}
+                />
+              );
+            })}
           </svg>
         </div>
         <button
@@ -120,6 +166,13 @@ class MyCanvas extends Component {
           onClick={() => this.onChangeMode("lines")}
         >
           Enter lines
+        </button>
+        <button
+          id="enter-polygons"
+          className="btn btn-primary"
+          onClick={() => this.onChangeMode("polygons")}
+        >
+          Enter polygons
         </button>
         <button
           id="export-to-json"
