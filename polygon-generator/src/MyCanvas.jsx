@@ -5,19 +5,15 @@ class MyCanvas extends Component {
         points: [],
         lines: []
     }
-    
-    onCanvasClick = (event) => {
-        // event.screenX =
-        console.log("item clicked at coord " + event.clientX + " " + event.clientY)
-    //     const points = [...this.state.points];
-    // const index = counters.indexOf(counter);
-    // counters[index] = { ...counter };
-    // counters[index].value++;
-    // this.setState({ counters })
 
+    onCanvasClick = (event) => {
+        console.log("item clicked at coord " + event.clientX + " " + event.clientY)
+        console.log(" state ", this.state.points)
+        const newPoint = [event.clientX, event.clientY];
+        const points = [...this.state.points, newPoint];
+        this.setState({ points })
     }
 
-    state = {}
     render() {
         return (<div id="canvas" onClick={this.onCanvasClick}></div>);
     }
