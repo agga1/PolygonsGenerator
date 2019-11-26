@@ -43,9 +43,8 @@ class MyCanvas extends Component {
           const prevPoints = [newPoint];
           this.setState({ prevPoints });
         } else {
-          let polygonEnded = false;
           let newLine;
-          let lines = [this.state.prevPoints[0], newPoint];
+          let lines = [...this.state.prevPoints, newPoint];
           let allLines;
           let prevPoints = [];
           if (
@@ -56,22 +55,55 @@ class MyCanvas extends Component {
               this.state.prevPoints[this.state.prevPoints.length - 1],
               this.state.prevPoints[0]
             ];
-            allLines = [...this.state.allLines, newLine];
-            const polygon = [...this.state.lines, newLine];
-            const polygons = [...this.state.polygons, polygon];
+            const polygons = [...this.state.polygons, this.state.prevPoints];
             this.setState({ polygons });
             lines = [];
-
-            polygonEnded = true;
-          }
-          if (!polygonEnded) {
+          } else {
             newLine = [
               this.state.prevPoints[this.state.prevPoints.length - 1],
               newPoint
             ];
-            allLines = [...this.state.allLines, newLine];
             prevPoints = [...this.state.prevPoints, newPoint];
           }
+
+          allLines = [...this.state.allLines, newLine];
+
+          this.setState({ lines });
+          this.setState({ prevPoints });
+          this.setState({ allLines });
+        }
+
+        break;
+      case "polygonalSpace":
+        if (this.state.prevPoints.length < 1) {
+          const prevPoints = [newPoint];
+          this.setState({ prevPoints });
+        } else {
+          let newLine;
+          let lines = [...this.state.prevPoints, newPoint];
+          let allLines;
+          let prevPoints = [];
+          if (
+            Math.abs(newPoint[0] - this.state.prevPoints[0][0]) < eps &&
+            Math.abs(newPoint[1] - this.state.prevPoints[0][1]) < eps
+          ) {
+            newLine = [
+              this.state.prevPoints[this.state.prevPoints.length - 1],
+              this.state.prevPoints[0]
+            ];
+            const polygon = lines;
+            const polygons = [...this.state.polygons, polygon];
+            this.setState({ polygons });
+            lines = [];
+          } else {
+            newLine = [
+              this.state.prevPoints[this.state.prevPoints.length - 1],
+              newPoint
+            ];
+            prevPoints = [...this.state.prevPoints, newPoint];
+          }
+
+          allLines = [...this.state.allLines, newLine];
 
           this.setState({ lines });
           this.setState({ prevPoints });
@@ -82,7 +114,7 @@ class MyCanvas extends Component {
     }
     console.log(this.state.points);
     console.log(this.state.lines);
-    console.log(this.state.polygon);
+    console.log(this.state.polygons);
   };
   onChangeMode = mode => {
     console.log("new mode " + mode);
