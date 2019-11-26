@@ -4,18 +4,14 @@ class MyCanvas extends Component {
   state = {
     points: [],
     prevPoints: [],
-    lines: [
-      [
-        [150, 100],
-        [20, 30]
-      ]
-    ],
+    lines: [],
     allLines: [],
     polygons: [],
     mode: "points"
   };
 
   onCanvasClick = event => {
+    const eps = 10;
     const point = [event.clientX, event.clientY];
     var element = document.getElementById("canvas");
     var position = element.getBoundingClientRect();
@@ -48,24 +44,32 @@ class MyCanvas extends Component {
           this.setState({ prevPoints });
         } else {
           let polygonEnded = false;
-          const newLine = [this.state.prevPoints[0], newPoint];
+          let newLine;
           let lines = [this.state.prevPoints[0], newPoint];
-          const allLines = [...this.state.lines, newLine];
+          let allLines;
           let prevPoints = [];
-          for (let i = 0; i < this.state.prevPoints; i++) {
-            if (
-              newPoint[0] == this.state.prevPoints[i][0] &&
-              newPoint[1] == this.state.prevPoints[i][1]
-            ) {
-              const polygon = [...this.state.lines, newLine];
-              const polygons = [...this.state.polygons, polygon];
-              this.setState({ polygons });
-              lines = [];
+          if (
+            Math.abs(newPoint[0] - this.state.prevPoints[0][0]) < eps &&
+            Math.abs(newPoint[1] - this.state.prevPoints[0][1]) < eps
+          ) {
+            newLine = [
+              this.state.prevPoints[this.state.prevPoints.length - 1],
+              this.state.prevPoints[0]
+            ];
+            allLines = [...this.state.allLines, newLine];
+            const polygon = [...this.state.lines, newLine];
+            const polygons = [...this.state.polygons, polygon];
+            this.setState({ polygons });
+            lines = [];
 
-              polygonEnded = true;
-            }
+            polygonEnded = true;
           }
           if (!polygonEnded) {
+            newLine = [
+              this.state.prevPoints[this.state.prevPoints.length - 1],
+              newPoint
+            ];
+            allLines = [...this.state.allLines, newLine];
             prevPoints = [...this.state.prevPoints, newPoint];
           }
 
