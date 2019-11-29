@@ -6,6 +6,7 @@ class MyCanvas extends Component {
     prevPoints: [],
     lines: [],
     allLines: [],
+    polygon: [],
     polygons: [],
     mode: "points"
   };
@@ -17,7 +18,7 @@ class MyCanvas extends Component {
     var position = element.getBoundingClientRect();
     var x = position.left;
     var y = position.top;
-    const newPoint = [point[0] - x, point[1] - y];
+    let newPoint = [point[0] - x, point[1] - y];
     console.log(
       this.state.mode + " clicked at coord " + newPoint[0] + " " + newPoint[1]
     );
@@ -76,40 +77,92 @@ class MyCanvas extends Component {
         break;
       case "polygonalSpace":
         if (this.state.prevPoints.length < 1) {
-          const prevPoints = [newPoint];
+          // first point in polygon
+          let prevPoints;
+          let allLines = this.state.allLines;
+
+          let exists = false;
+          for (let i = 0; i < allLines.length && !exists; i++) {
+            for (let j = 0; j <= 1; j++) {
+              if (
+                Math.abs(allLines[i][j][0] - newPoint[0]) < eps &&
+                Math.abs(allLines[i][j][1] - newPoint[1]) < eps
+              ) {
+                prevPoints = [allLines[i][j]];
+                exists = true;
+              }
+            }
+          }
+
+          if (!exists) {
+            prevPoints = [newPoint];
+          }
+
           this.setState({ prevPoints });
         } else {
           let newLine;
-          let lines = [...this.state.prevPoints, newPoint];
-          let allLines;
-          let prevPoints = [];
+          let allLines = this.state.allLines;
+          let prevPoints;
+          let lastPoint = this.state.prevPoints[
+            this.state.prevPoints.length - 1
+          ];
+
           if (
+            // end of polygon
             Math.abs(newPoint[0] - this.state.prevPoints[0][0]) < eps &&
             Math.abs(newPoint[1] - this.state.prevPoints[0][1]) < eps
           ) {
-            newLine = [
-              this.state.prevPoints[this.state.prevPoints.length - 1],
-              this.state.prevPoints[0]
-            ];
-            const polygon = lines;
-            const polygons = [...this.state.polygons, polygon];
+            newPoint = this.state.prevPoints[0];
+
+            const polygons = [...this.state.polygons, this.state.prevPoints];
             this.setState({ polygons });
-            lines = [];
+            prevPoints = [];
           } else {
-            newLine = [
-              this.state.prevPoints[this.state.prevPoints.length - 1],
-              newPoint
-            ];
+            // not end of polygon
+            let exists = false; // flag
+            for (let i = 0; i < allLines.length && !exists; i++) {
+              // checking if that point is part of any polygon
+              for (let j = 0; j <= 1; j++) {
+                if (
+                  Math.abs(allLines[i][j][0] - newPoint[0]) < eps &&
+                  Math.abs(allLines[i][j][1] - newPoint[1]) < eps
+                ) {
+                  newPoint = allLines[i][j];
+                  exists = true;
+                }
+              }
+            }
+
             prevPoints = [...this.state.prevPoints, newPoint];
           }
 
-          allLines = [...this.state.allLines, newLine];
+          if (
+            lastPoint[0] < newPoint[0] ||
+            (lastPoint[0] == newPoint[0] && lastPoint[1] < newPoint[1])
+          ) {
+            newLine = [lastPoint, newPoint];
+          } else {
+            newLine = [newPoint, lastPoint];
+          }
 
-          this.setState({ lines });
+          let exists = false;
+          for (let i = 0; i < allLines.length && !exists; i++) {
+            // to have no duplicates in allLines array
+            if (
+              Math.abs(allLines[i][0][0] - newLine[0][0]) < eps &&
+              Math.abs(allLines[i][0][1] - newLine[0][1]) < eps &&
+              Math.abs(allLines[i][1][0] - newLine[1][0]) < eps &&
+              Math.abs(allLines[i][1][1] - newLine[1][1]) < eps
+            ) {
+              exists = true;
+            }
+          }
+          if (!exists) {
+            allLines = [...this.state.allLines, newLine];
+          }
           this.setState({ prevPoints });
           this.setState({ allLines });
         }
-
         break;
     }
     console.log(this.state.points);
@@ -142,7 +195,12 @@ class MyCanvas extends Component {
         download("points.json", JSON.stringify(this.state.points));
         break;
       case "lines":
-        download("lines.json", JSON.stringify(this.state.lines));
+        if (this.state.mode == "polygonalSpace") {
+          download("lines.json", JSON.stringify(this.state.allLines));
+        } else {
+          download("lines.json", JSON.stringify(this.state.lines));
+        }
+
         break;
       case "polygons":
         download("polygons.json", JSON.stringify(this.state.polygons));
@@ -211,6 +269,13 @@ class MyCanvas extends Component {
           Enter polygons
         </button>
         <button
+          id="enter-polygonal-space"
+          className="btn btn-primary"
+          onClick={() => this.onChangeMode("polygonalSpace")}
+        >
+          Enter polygonal space
+        </button>
+        <button
           id="export-to-json"
           className="btn btn-primary"
           onClick={() => this.exportToJson("points")}
@@ -223,6 +288,13 @@ class MyCanvas extends Component {
           onClick={() => this.exportToJson("lines")}
         >
           export lines to json
+        </button>
+        <button
+          id="export-to-json"
+          className="btn btn-primary"
+          onClick={() => this.exportToJson("polygons")}
+        >
+          export polygons to json
         </button>
       </div>
     );
