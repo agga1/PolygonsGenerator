@@ -247,7 +247,7 @@ class MyCanvas extends Component {
             })}
           </svg>
         </div>
-        <button
+        {/* <button
           id="enter-points"
           className="btn btn-primary"
           onClick={() => this.onChangeMode("points")}
@@ -267,15 +267,15 @@ class MyCanvas extends Component {
           onClick={() => this.onChangeMode("polygons")}
         >
           Enter polygons
-        </button>
+        </button> */}
         <button
           id="enter-polygonal-space"
           className="btn btn-primary"
           onClick={() => this.onChangeMode("polygonalSpace")}
         >
-          Enter polygonal space
+          enter polygonal space
         </button>
-        <button
+        {/* <button
           id="export-to-json"
           className="btn btn-primary"
           onClick={() => this.exportToJson("points")}
@@ -288,7 +288,7 @@ class MyCanvas extends Component {
           onClick={() => this.exportToJson("lines")}
         >
           export lines to json
-        </button>
+        </button> */}
         <button
           id="export-to-json"
           className="btn btn-primary"
